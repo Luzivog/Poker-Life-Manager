@@ -3,6 +3,8 @@ import { FlatList, Text, View, StyleSheet, TouchableOpacity } from 'react-native
 import { Session } from '@/config/types';
 import { COLORS } from '@/config/variables';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { isCompletedSession } from './HomeScreen/utils';
 
 interface SessionListProps {
   sessions: (Session & { id: string })[];
@@ -13,7 +15,15 @@ const SessionList = ({ sessions, loading }: SessionListProps) => {
   const router = useRouter();
   
   // Helper function to calculate session duration
-  const calculateDuration = (start: Date, end: Date): string => {
+  const calculateDuration = (start: Date, end: Date | undefined): string => {
+    if (!end) {
+      // For live sessions, calculate duration from start to now
+      const durationMs = new Date().getTime() - new Date(start).getTime();
+      const hours = Math.floor(durationMs / (1000 * 60 * 60));
+      const minutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
+      return `${hours}h ${minutes}m`;
+    }
+    
     const durationMs = new Date(end).getTime() - new Date(start).getTime();
     const hours = Math.floor(durationMs / (1000 * 60 * 60));
     const minutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
@@ -38,16 +48,24 @@ const SessionList = ({ sessions, loading }: SessionListProps) => {
   };
   
   const renderSession = ({ item }: { item: Session & { id: string } }) => {
-    const profit = item.cash_out - item.buy_in;
+    const isLive = item.status === 'live';
+    const profit = isLive ? 0 : (item.cash_out || 0) - item.buy_in;
     const profitColor = profit >= 0 ? COLORS.primary : COLORS.red;
     const duration = calculateDuration(item.start_time, item.end_time);
     const sessionDate = formatDate(item.start_time);
     
     return (
       <TouchableOpacity 
-        style={styles.sessionItem}
+        style={[styles.sessionItem, isLive && styles.liveSessionItem]}
         onPress={() => handleSessionPress(item)}
       >
+        {isLive && (
+          <View style={styles.liveIndicator}>
+            <View style={styles.liveDot} />
+            <Text style={styles.liveText}>LIVE</Text>
+          </View>
+        )}
+        
         <View style={styles.sessionHeader}>
           <Text style={styles.sessionLocation}>{item.location}</Text>
           <Text style={styles.sessionDate}>{sessionDate}</Text>
@@ -55,10 +73,21 @@ const SessionList = ({ sessions, loading }: SessionListProps) => {
         <Text style={styles.sessionGame}>{item.game_type} {item.small_blind}/{item.big_blind}</Text>
         
         <View style={styles.sessionDetails}>
-          <Text style={styles.sessionDuration}>Duration: {duration}</Text>
-          <Text style={[styles.sessionProfit, { color: profitColor }]}>
-            {profit >= 0 ? '+' : ''}{profit}$
+          <Text style={styles.sessionDuration}>
+            {isLive ? (
+              <View style={styles.durationContainer}>
+                <Ionicons name="time" size={16} color="#cccccc" style={styles.durationIcon} />
+                <Text style={styles.sessionDuration}>{duration}</Text>
+              </View>
+            ) : (
+              `Duration: ${duration}`
+            )}
           </Text>
+          {!isLive && (
+            <Text style={[styles.sessionProfit, { color: profitColor }]}>
+              {profit >= 0 ? '+' : ''}{profit}$
+            </Text>
+          )}
         </View>
       </TouchableOpacity>
     );
@@ -89,10 +118,41 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 10,
   },
+  liveSessionItem: {
+    borderLeftWidth: 3,
+    borderLeftColor: COLORS.primary,
+    position: 'relative',
+  },
+  liveIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+  },
+  liveDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: COLORS.primary,
+    marginRight: 5,
+  },
+  liveText: {
+    color: COLORS.primary,
+    fontWeight: 'bold',
+    fontSize: 12,
+  },
   sessionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 5,
+  },
+  durationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  durationIcon: {
+    marginRight: 4,
   },
   sessionLocation: {
     color: 'white',

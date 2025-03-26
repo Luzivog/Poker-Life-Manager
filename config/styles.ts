@@ -64,5 +64,25 @@ export const globalStyles = StyleSheet.create({
         alignItems: "center",
         paddingHorizontal: 10,
         paddingVertical: 20,
-    }
+    },
+    liveSessionButton: {
+        position: 'absolute',
+        bottom: 10,
+        left: '5%',
+        right: '5%',
+        backgroundColor: COLORS.primary,
+        paddingVertical: 14,
+        borderRadius: 30,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
 })

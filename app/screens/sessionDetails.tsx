@@ -1,25 +1,22 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, Alert } from 'react-native';
 import { Session } from '@/config/types';
 import { globalStyles } from '@/config/styles';
-import { COLORS } from '@/config/variables';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../Auth.native';
-import { updateSession } from '../services/sessionService';
+import { updateSession, endLiveSession } from '../services/sessionService';
 
 // Import modular components
-import SessionHeader from '../components/SessionDetails/SessionHeader';
 import BackButton from '../components/SessionDetails/BackButton';
 import EditButton from '../components/SessionDetails/EditButton';
-import GameInfoSection from '../components/SessionDetails/GameInfoSection';
-import SessionInfoSection from '../components/SessionDetails/SessionInfoSection';
-import FinancialSection from '../components/SessionDetails/FinancialSection';
-import NotesSection from '../components/SessionDetails/NotesSection';
 import AddSessionMenu from '../components/AddSessionMenu';
+import EndLiveSessionModal from '../components/EndLiveSessionModal';
+import SessionNotFoundView from '../components/SessionDetails/SessionNotFoundView';
+import SessionDetailsContent from '../components/SessionDetails/SessionDetailsContent';
+import EndLiveSessionButton from '../components/SessionDetails/EndLiveSessionButton';
 
 export default function SessionDetailsScreen() {
-  const router = useRouter();
   const params = useLocalSearchParams();
   const { user } = useAuth();
 
@@ -33,27 +30,24 @@ export default function SessionDetailsScreen() {
   const [isEditMenuVisible, setIsEditMenuVisible] = useState(false);
   const [editSessionData, setEditSessionData] = useState<Session | null>(null);
   
+  // State for end live session modal
+  const [isEndLiveModalVisible, setIsEndLiveModalVisible] = useState(false);
+  
+  // Check if this is a live session
+  const isLiveSession = sessionData?.status === 'live';
+
+  // If no session data is found, show the not found view
   if (!sessionData) {
-    return (
-      <View style={[globalStyles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-        <Text style={{ color: 'white', fontSize: 18 }}>Session not found</Text>
-        <TouchableOpacity 
-          style={{ marginTop: 20, padding: 10 }}
-          onPress={() => router.back()}
-        >
-          <Text style={{ color: COLORS.primary, fontSize: 16 }}>Go back</Text>
-        </TouchableOpacity>
-      </View>
-    );
+    return <SessionNotFoundView />;
   }
   
   // Handle opening the edit menu
   const handleEditSession = () => {
-    // Convert string dates to Date objects
+    // Convert string dates to Date objects and handle optional fields
     const sessionWithDates: Session = {
       ...sessionData,
       start_time: new Date(sessionData.start_time),
-      end_time: new Date(sessionData.end_time)
+      end_time: sessionData.end_time ? new Date(sessionData.end_time) : undefined
     };
     setEditSessionData(sessionWithDates);
     setIsEditMenuVisible(true);
@@ -94,35 +88,63 @@ export default function SessionDetailsScreen() {
     }
   };
 
-  // Calculate profit for header
-  const profit = sessionData.cash_out - sessionData.buy_in;
+  // Handle showing end live session modal
+  const handleShowEndLiveSession = () => {
+    setIsEndLiveModalVisible(true);
+  };
+
+  // Handle ending a live session
+  const handleEndLiveSession = async (cashOut: number) => {
+    if (!user) {
+      setIsEndLiveModalVisible(false);
+      return;
+    }
+
+    try {
+      const { session: updatedSession, error } = await endLiveSession(sessionData.id, cashOut);
+      
+      if (error) {
+        Alert.alert('Error', 'Failed to end live session');
+      } else {
+        Alert.alert('Success', 'Session ended successfully');
+        // Update the session data in state
+        setSessionData(updatedSession);
+      }
+    } catch (error) {
+      console.error('Exception in handleEndLiveSession:', error);
+      Alert.alert('Error', 'An unexpected error occurred');
+    } finally {
+      setIsEndLiveModalVisible(false);
+    }
+  };
+
+  // Calculate profit for header (only if this is not a live session)
+  const profit = !isLiveSession && sessionData.cash_out !== undefined 
+    ? sessionData.cash_out - sessionData.buy_in 
+    : 0;
 
   return (
     <SafeAreaView style={globalStyles.container}>
+      {/* Screen Header with Back/Edit buttons */}
       <View style={globalStyles.screenHeader}>
         <BackButton />
-        <Text style={globalStyles.screenTitle}>Session Details</Text>
-        <EditButton onPress={handleEditSession} />
+        <Text style={globalStyles.screenTitle}>
+          {isLiveSession ? 'Live Session' : 'Session Details'}
+        </Text>
+        {!isLiveSession && <EditButton onPress={handleEditSession} />}
       </View>
 
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        <View style={styles.card}>
-          {/* Session Header with game type and profit */}
-          <SessionHeader game_type={sessionData.game_type} profit={profit} />
+      {/* Main session content */}
+      <SessionDetailsContent 
+        sessionData={sessionData}
+        isLiveSession={isLiveSession}
+        profit={profit}
+      />
 
-          {/* Game Info Section */}
-          <GameInfoSection sessionData={sessionData} />
-
-          {/* Session Info Section */}
-          <SessionInfoSection sessionData={sessionData} />
-
-          {/* Financial Section */}
-          <FinancialSection sessionData={sessionData} />
-
-          {/* Notes Section (conditionally rendered) */}
-          <NotesSection notes={sessionData.notes} />
-        </View>
-      </ScrollView>
+      {/* End Live Session Button - Only show for live sessions */}
+      {isLiveSession && (
+        <EndLiveSessionButton onPress={handleShowEndLiveSession} />
+      )}
 
       {/* Add Session Menu for editing */}
       {editSessionData && (
@@ -134,18 +156,14 @@ export default function SessionDetailsScreen() {
           onValueChange={handleValueChange}
         />
       )}
+
+      {/* End Live Session Modal */}
+      <EndLiveSessionModal
+        visible={isEndLiveModalVisible}
+        onClose={() => setIsEndLiveModalVisible(false)}
+        onEndSession={handleEndLiveSession}
+        session={sessionData}
+      />
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  card: {
-    backgroundColor: '#222222',
-    borderRadius: 10,
-    padding: 15,
-    margin: 10,
-  },
-});

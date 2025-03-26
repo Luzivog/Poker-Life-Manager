@@ -14,12 +14,42 @@ export interface SessionStats {
 }
 
 /**
- * Calculates statistics from session data
+ * Checks if a session is completed (not live)
+ * @param session Session to check
+ * @returns Boolean indicating if the session is completed
+ */
+export const isCompletedSession = (session: SessionWithId): boolean => {
+  return (
+    session.status === 'completed' &&
+    session.end_time !== null && 
+    session.cash_out !== null && 
+    session.cash_out !== undefined
+  );
+};
+
+/**
+ * Calculates statistics from session data, excluding live sessions
  * @param sessions Array of user's poker sessions
  * @returns Object with calculated statistics
  */
 export const calculateStats = (sessions: SessionWithId[]): SessionStats => {
   if (!sessions || sessions.length === 0) {
+    return {
+      totalSessions: 0,
+      totalProfit: 0,
+      totalHours: 0,
+      avgProfit: 0,
+      avgHourlyRate: 0,
+      biggestWin: 0,
+      biggestLoss: 0,
+      winRate: 0
+    };
+  }
+
+  // Filter out live sessions
+  const completedSessions = sessions.filter(isCompletedSession);
+  
+  if (completedSessions.length === 0) {
     return {
       totalSessions: 0,
       totalProfit: 0,
@@ -38,12 +68,12 @@ export const calculateStats = (sessions: SessionWithId[]): SessionStats => {
   let biggestWin = 0;
   let biggestLoss = 0;
 
-  sessions.forEach((session) => {
-    const profit = session.cash_out - session.buy_in;
+  completedSessions.forEach((session) => {
+    const profit = session.cash_out! - session.buy_in;
     totalProfit += profit;
     
     // Calculate duration
-    const durationMs = calculateDurationMs(session.start_time, session.end_time);
+    const durationMs = calculateDurationMs(session.start_time, session.end_time!);
     totalDurationMs += durationMs;
     
     // Track winning sessions
@@ -59,13 +89,13 @@ export const calculateStats = (sessions: SessionWithId[]): SessionStats => {
   const totalHours = totalDurationMs / (1000 * 60 * 60);
   
   // Calculate win rate (percentage of winning sessions)
-  const winRate = (winningSessionsCount / sessions.length) * 100;
+  const winRate = (winningSessionsCount / completedSessions.length) * 100;
 
   return {
-    totalSessions: sessions.length,
+    totalSessions: completedSessions.length,
     totalProfit,
     totalHours,
-    avgProfit: totalProfit / sessions.length,
+    avgProfit: totalProfit / completedSessions.length,
     avgHourlyRate: totalProfit / totalHours,
     biggestWin,
     biggestLoss,

@@ -18,9 +18,23 @@ export const SESSION_DEFAULTS: Session = {
     start_time: new Date(),
     end_time: new Date(),
     stack_size_updates: [],
-    notes: ""
+    notes: "",
+    status: "completed"
 };
 
+// Default for creating a live session
+export const LIVE_SESSION_DEFAULTS: Session = {
+    game_type: "NL Hold'em",
+    small_blind: 1,
+    big_blind: 2,
+    buy_in: 0,
+    table_size: "9-max",
+    location: "Playground Poker Club",
+    start_time: new Date(),
+    stack_size_updates: [],
+    notes: "",
+    status: "live"
+};
 
 export const SUPABASE_CONFIG = {
     url: "http://192.168.0.22:54321",
