@@ -105,7 +105,7 @@ export default function SessionDetailsScreen() {
         <EditButton onPress={handleEditSession} />
       </View>
 
-      <ScrollView style={styles.container}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.card}>
           {/* Session Header with game type and profit */}
           <SessionHeader game_type={sessionData.game_type} profit={profit} />

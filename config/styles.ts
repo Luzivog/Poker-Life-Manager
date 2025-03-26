@@ -20,7 +20,8 @@ export const globalStyles = StyleSheet.create({
         paddingHorizontal: 10,
         flexDirection: "row",
         justifyContent: "space-between",
-        alignItems: "center"
+        alignItems: "center",
+        paddingBottom: 10,
     },
     screenTitle: {
         color: "white",

@@ -29,7 +29,7 @@ export default function SessionsScreen() {
       // Only load sessions if this is a new focus event
       if (!isFocusedRef.current) {
         isFocusedRef.current = true;
-        loadSessions();
+        loadSessions(false);
       }
       
       return () => {

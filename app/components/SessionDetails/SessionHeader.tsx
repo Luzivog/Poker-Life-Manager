@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { COLORS } from '@/config/variables';
+import { globalStyles } from '@/config/styles';
 
 interface SessionHeaderProps {
   game_type: string;
@@ -11,7 +12,7 @@ const SessionHeader = ({ game_type, profit }: SessionHeaderProps) => {
   const profitColor = profit >= 0 ? COLORS.primary : COLORS.red;
   
   return (
-    <View style={styles.headerSection}>
+    <View style={globalStyles.screenHeader}>
       <Text style={styles.game_type}>{game_type}</Text>
       <Text style={[styles.profit, { color: profitColor }]}>
         {profit >= 0 ? '+' : ''}{profit}$
@@ -21,12 +22,6 @@ const SessionHeader = ({ game_type, profit }: SessionHeaderProps) => {
 };
 
 const styles = StyleSheet.create({
-  headerSection: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 15,
-  },
   game_type: {
     color: 'white',
     fontSize: 20,

@@ -19,9 +19,11 @@ export const useSessions = () => {
     }
   }, [user]);
 
-  const loadSessions = async () => {
+  const loadSessions = async (showLoading: boolean = true) => {
     try {
-      setLoading(true);
+      if (showLoading) {
+        setLoading(true);
+      }
       const { sessions: fetchedSessions, error } = await fetchSessions();
       
       if (error) {
@@ -30,7 +32,9 @@ export const useSessions = () => {
         setSessions(fetchedSessions);
       }
     } finally {
-      setLoading(false);
+      if (showLoading) {
+        setLoading(false);
+      }
     }
   };
 
