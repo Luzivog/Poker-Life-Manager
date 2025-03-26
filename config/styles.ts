@@ -1,9 +1,14 @@
 import { COLORS } from "@/config/variables";
 import { StyleSheet } from "react-native";
 
-const baseButton = {
+const baseTextButton = {
     color: COLORS.primary,
     fontSize: 16,
+};
+
+const baseIconButton = {
+    color: COLORS.primary,
+    fontSize: 30,
 };
 
 export const globalStyles = StyleSheet.create({
@@ -25,17 +30,26 @@ export const globalStyles = StyleSheet.create({
     },
     slideUpMenuContainer: {
         backgroundColor: COLORS.background,
-        height: "70%",
+        height: "60%",
         borderTopLeftRadius: 15,
         borderTopRightRadius: 15,
     },
-    button: baseButton,
-    leftButton: {
-        ...baseButton,
+    textButton: baseTextButton,
+    leftTextButton: {
+        ...baseTextButton,
         paddingRight: 20
     },
-    rightButton: {
-        ...baseButton,
+    rightTextButton: {
+        ...baseTextButton,
+        paddingLeft: 20
+    },
+    iconButton: baseIconButton,
+    leftIconButton: {
+        ...baseIconButton,
+        paddingRight: 20
+    },
+    rightIconButton: {
+        ...baseIconButton,
         paddingLeft: 20
     },
     modalOverlay: {

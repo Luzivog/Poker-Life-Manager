@@ -3,7 +3,8 @@ import { Session } from "./types";
 export const COLORS = {
     primary: "#32a850",
     secondary: "#9adbaa",
-    background: "#0F0F0F"
+    background: "#0F0F0F",
+    red: "#ff3b30"
 };
 
 export const SESSION_DEFAULTS: Session = {
