@@ -3,16 +3,16 @@ import { View, Text, StyleSheet } from 'react-native';
 import { COLORS } from '@/config/variables';
 
 interface SessionHeaderProps {
-  location: string;
+  game_type: string;
   profit: number;
 }
 
-const SessionHeader = ({ location, profit }: SessionHeaderProps) => {
+const SessionHeader = ({ game_type, profit }: SessionHeaderProps) => {
   const profitColor = profit >= 0 ? COLORS.primary : COLORS.red;
   
   return (
     <View style={styles.headerSection}>
-      <Text style={styles.location}>{location}</Text>
+      <Text style={styles.game_type}>{game_type}</Text>
       <Text style={[styles.profit, { color: profitColor }]}>
         {profit >= 0 ? '+' : ''}{profit}$
       </Text>
@@ -27,9 +27,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 15,
   },
-  location: {
+  game_type: {
     color: 'white',
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
   },
   profit: {
