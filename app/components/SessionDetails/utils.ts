@@ -1,0 +1,24 @@
+/**
+ * Formats a date for display in the session details
+ */
+export const formatDate = (date: Date | string): string => {
+  return new Date(date).toLocaleDateString(undefined, {
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+};
+
+/**
+ * Calculates the duration between two dates and formats it as hours and minutes
+ */
+export const calculateDuration = (start: Date | string, end: Date | string): string => {
+  const durationMs = new Date(end).getTime() - new Date(start).getTime();
+  const hours = Math.floor(durationMs / (1000 * 60 * 60));
+  const minutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
+  
+  return `${hours}h ${minutes}m`;
+};

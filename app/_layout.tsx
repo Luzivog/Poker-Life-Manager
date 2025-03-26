@@ -22,6 +22,7 @@ function RootLayoutNav() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="login" options={{ animation: 'fade' }} />
       <Stack.Screen name="index" options={{ animation: 'fade' }} />
+      <Stack.Screen name="sessionDetails" options={{ animation: 'slide_from_right' }} />
     </Stack>
   );
 }

@@ -3,6 +3,7 @@ import NumericInputItem from "./NumericInputItem";
 import LocationInputItem from "./LocationInputItem";
 import OptionsInputItem from "./OptionsInputItem";
 import DateTimeInputItem from "./DateTimeInputItem";
+import TextInputItem from "./TextInputItem";
 import BaseMenuItem from "./BaseMenuItem";
 import { MenuItemProps } from "./types";
 
@@ -32,6 +33,10 @@ export default function MenuItem(props: MenuItemProps) {
       return <OptionsInputItem {...props} />;
     }
     
+    if (itemType === "notes") {
+      return <TextInputItem {...props} />;
+    }
+    
     // Default fallback to base component
     return <BaseMenuItem {...props} />;
   };
@@ -47,4 +52,4 @@ export default function MenuItem(props: MenuItemProps) {
       {renderInputComponent()}
     </View>
   );
-} 
+}

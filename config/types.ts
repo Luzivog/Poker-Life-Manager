@@ -11,5 +11,6 @@ export interface Session {
   location: string;
   start_time: Date;
   end_time: Date;
-  stack_size_updates?: { time: Date; stack_size: number }[];
+  stack_size_updates: { time: Date; stack_size: number }[];
+  notes: string;
 }

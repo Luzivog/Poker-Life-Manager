@@ -14,9 +14,24 @@ export default function BaseMenuItem({
   
   const displayValue = () => {
     if (itemValue === undefined) return "";
-    if (itemValue instanceof Date) return itemValue.toLocaleString();
-    return itemValue.toString();
+    
+    let valueStr = "";
+    if (itemValue instanceof Date) {
+      valueStr = itemValue.toLocaleString();
+    } else {
+      valueStr = itemValue.toString();
+    };
+    
+    // If a newline appears within the first 35 characters, cut the string there.
+    const newlineIndex = valueStr.indexOf("\n");
+    if (newlineIndex !== -1 && newlineIndex < 35) {
+      return valueStr.substring(0, newlineIndex) + "...";
+    }
+    
+    // Otherwise, truncate strings longer than 35 characters.
+    return valueStr.length > 35 ? valueStr.substring(0, 32) + "..." : valueStr;
   };
+  
   
   const isNumeric = typeof itemValue === "number";
   
@@ -38,4 +53,4 @@ export default function BaseMenuItem({
       </Text>
     </TouchableOpacity>
   );
-} 
+}

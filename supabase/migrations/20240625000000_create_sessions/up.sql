@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS sessions (
   location TEXT NOT NULL,
   start_time TIMESTAMP WITH TIME ZONE NOT NULL,
   end_time TIMESTAMP WITH TIME ZONE NOT NULL,
-  stack_size_updates JSONB,
+  stack_size_updates JSONB NOT NULL DEFAULT '[]'::jsonb,
+  notes TEXT DEFAULT '',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL
 );

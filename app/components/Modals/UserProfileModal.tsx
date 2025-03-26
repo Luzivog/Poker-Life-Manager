@@ -9,7 +9,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/config/variables";
 import { globalStyles } from "@/config/styles";
-import SlideUpModal from "./SlideUpModal";
+import SlideUpModal from "../SlideUpModal";
 
 interface UserProfileModalProps {
   visible: boolean;

@@ -1,7 +1,8 @@
 import React from 'react';
-import { FlatList, Text, View, StyleSheet } from 'react-native';
+import { FlatList, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Session } from '@/config/types';
 import { COLORS } from '@/config/variables';
+import { useRouter } from 'expo-router';
 
 interface SessionListProps {
   sessions: (Session & { id: string })[];
@@ -9,6 +10,8 @@ interface SessionListProps {
 }
 
 const SessionList = ({ sessions, loading }: SessionListProps) => {
+  const router = useRouter();
+  
   // Helper function to calculate session duration
   const calculateDuration = (start: Date, end: Date): string => {
     const durationMs = new Date(end).getTime() - new Date(start).getTime();
@@ -27,6 +30,13 @@ const SessionList = ({ sessions, loading }: SessionListProps) => {
     });
   };
   
+  const handleSessionPress = (session: Session & { id: string }) => {
+    router.push({
+      pathname: '/sessionDetails',
+      params: { session: JSON.stringify(session) }
+    });
+  };
+  
   const renderSession = ({ item }: { item: Session & { id: string } }) => {
     const profit = item.cash_out - item.buy_in;
     const profitColor = profit >= 0 ? COLORS.primary : COLORS.red;
@@ -34,7 +44,10 @@ const SessionList = ({ sessions, loading }: SessionListProps) => {
     const sessionDate = formatDate(item.start_time);
     
     return (
-      <View style={styles.sessionItem}>
+      <TouchableOpacity 
+        style={styles.sessionItem}
+        onPress={() => handleSessionPress(item)}
+      >
         <View style={styles.sessionHeader}>
           <Text style={styles.sessionLocation}>{item.location}</Text>
           <Text style={styles.sessionDate}>{sessionDate}</Text>
@@ -47,7 +60,7 @@ const SessionList = ({ sessions, loading }: SessionListProps) => {
             {profit >= 0 ? '+' : ''}{profit}$
           </Text>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 

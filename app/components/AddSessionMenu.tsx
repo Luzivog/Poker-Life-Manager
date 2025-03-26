@@ -85,6 +85,12 @@ export default function AddSessionMenu({
         sessionData={sessionData} 
         onValueChange={onValueChange} 
       />
+      <MenuItem 
+        title="Notes" 
+        itemType="notes" 
+        sessionData={sessionData} 
+        onValueChange={onValueChange} 
+      />
     </SlideUpModal>
   );
 }

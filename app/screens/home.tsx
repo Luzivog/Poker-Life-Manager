@@ -9,7 +9,7 @@ import {
 import { useAuth } from "../Auth.native";
 import { globalStyles } from "@/config/styles";
 import { Ionicons } from "@expo/vector-icons";
-import UserProfileModal from "../components/UserProfileModal";
+import UserProfileModal from "../components/Modals/UserProfileModal";
 
 export default function HomeScreen() {
   const { user, loading, signOut } = useAuth();
