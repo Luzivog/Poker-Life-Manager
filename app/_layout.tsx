@@ -1,7 +1,7 @@
-import { COLORS } from "@/config/variables";
 import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AuthProvider, useAuth } from "./Auth.native";
+import { UserDataProvider } from "./UserDataContext";
 import { useEffect } from "react";
 import { useRouter } from "expo-router";
 
@@ -23,6 +23,7 @@ function RootLayoutNav() {
       <Stack.Screen name="login" options={{ animation: 'fade' }} />
       <Stack.Screen name="index" options={{ animation: 'fade' }} />
       <Stack.Screen name="sessionDetails" options={{ animation: 'slide_from_right' }} />
+      <Stack.Screen name="liveSessionDetails" options={{ animation: 'slide_from_right' }} />
     </Stack>
   );
 }
@@ -31,7 +32,9 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AuthProvider>
-        <RootLayoutNav />
+        <UserDataProvider>
+          <RootLayoutNav />
+        </UserDataProvider>
       </AuthProvider>
     </GestureHandlerRootView>
   )

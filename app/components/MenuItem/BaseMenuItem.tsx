@@ -1,4 +1,3 @@
-import { Session } from "@/config/types";
 import { COLORS } from "@/config/variables";
 import { TouchableOpacity, Text } from "react-native";
 import { BaseMenuItemProps } from "./types";

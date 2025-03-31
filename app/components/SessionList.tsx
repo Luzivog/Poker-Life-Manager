@@ -1,13 +1,12 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { FlatList, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
-import { Session } from '@/config/types';
+import { LiveSessionWithId, SessionWithId } from '@/config/types';
 import { COLORS } from '@/config/variables';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { isCompletedSession } from './HomeScreen/utils';
 
 interface SessionListProps {
-  sessions: (Session & { id: string })[];
+  sessions: (SessionWithId)[];
   loading: boolean;
 }
 
@@ -40,14 +39,17 @@ const SessionList = ({ sessions, loading }: SessionListProps) => {
     });
   };
   
-  const handleSessionPress = (session: Session & { id: string }) => {
+  const handleSessionPress = (session: SessionWithId) => {
+    // Direct to the appropriate screen based on session status
+    const pathname = session.status === 'live' ? '/liveSessionDetails' : '/sessionDetails';
+    
     router.push({
-      pathname: '/sessionDetails',
+      pathname,
       params: { session: JSON.stringify(session) }
     });
   };
   
-  const renderSession = ({ item }: { item: Session & { id: string } }) => {
+  const renderSession = ({ item }: { item: SessionWithId }) => {
     const isLive = item.status === 'live';
     const profit = isLive ? 0 : (item.cash_out || 0) - item.buy_in;
     const profitColor = profit >= 0 ? COLORS.primary : COLORS.red;
@@ -94,17 +96,19 @@ const SessionList = ({ sessions, loading }: SessionListProps) => {
   };
 
   return (
-    <FlatList
-      data={sessions}
-      renderItem={renderSession}
-      keyExtractor={item => item.id}
-      contentContainerStyle={styles.sessionsList}
-      ListEmptyComponent={
-        <Text style={styles.emptyListText}>
-          {loading ? 'Loading sessions...' : 'No sessions yet. Tap "Add" to create one.'}
-        </Text>
-      }
-    />
+    <View style={{ flex: 1 }}>
+      <FlatList
+        data={sessions}
+        renderItem={renderSession}
+        keyExtractor={item => item.id.toString()}
+        contentContainerStyle={styles.sessionsList}
+        ListEmptyComponent={
+          <Text style={styles.emptyListText}>
+            {loading ? 'Loading sessions...' : 'No sessions yet. Tap "Add" to create one.'}
+          </Text>
+        }
+      />
+  </View>
   );
 };
 

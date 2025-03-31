@@ -9,14 +9,14 @@ import {
 import SlideUpModal from "./SlideUpModal";
 import { globalStyles } from "@/config/styles";
 import { COLORS } from "@/config/variables";
-import { SessionWithId } from "../services/sessionService";
 import NumericInputItem from "./MenuItem/NumericInputItem";
+import { LiveSessionWithId } from "@/config/types";
 
 interface EndLiveSessionModalProps {
   visible: boolean;
   onClose: () => void;
   onEndSession: (cashOut: number) => void;
-  session: SessionWithId;
+  session: LiveSessionWithId;
 }
 
 export default function EndLiveSessionModal({
@@ -26,10 +26,6 @@ export default function EndLiveSessionModal({
   session
 }: EndLiveSessionModalProps) {
   const [cashOut, setCashOut] = useState(0);
-
-  const handleNumericInputChange = (_: any, value: number) => {
-    setCashOut(value);
-  };
   
   const handleEndSession = () => {
     if (cashOut < 0) {

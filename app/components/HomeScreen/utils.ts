@@ -1,4 +1,4 @@
-import { SessionWithId } from "../../services/sessionService";
+import { CompletedSessionWithId, SessionWithId } from "@/config/types";
 import { calculateDurationMs } from "../SessionDetails/utils";
 
 // Statistics interface
@@ -32,7 +32,7 @@ export const isCompletedSession = (session: SessionWithId): boolean => {
  * @param sessions Array of user's poker sessions
  * @returns Object with calculated statistics
  */
-export const calculateStats = (sessions: SessionWithId[]): SessionStats => {
+export const calculateStats = (sessions: CompletedSessionWithId[]): SessionStats => {
   if (!sessions || sessions.length === 0) {
     return {
       totalSessions: 0,
@@ -46,10 +46,8 @@ export const calculateStats = (sessions: SessionWithId[]): SessionStats => {
     };
   }
 
-  // Filter out live sessions
-  const completedSessions = sessions.filter(isCompletedSession);
   
-  if (completedSessions.length === 0) {
+  if (sessions.length === 0) {
     return {
       totalSessions: 0,
       totalProfit: 0,
@@ -68,7 +66,7 @@ export const calculateStats = (sessions: SessionWithId[]): SessionStats => {
   let biggestWin = 0;
   let biggestLoss = 0;
 
-  completedSessions.forEach((session) => {
+  sessions.forEach((session) => {
     const profit = session.cash_out! - session.buy_in;
     totalProfit += profit;
     
@@ -89,13 +87,13 @@ export const calculateStats = (sessions: SessionWithId[]): SessionStats => {
   const totalHours = totalDurationMs / (1000 * 60 * 60);
   
   // Calculate win rate (percentage of winning sessions)
-  const winRate = (winningSessionsCount / completedSessions.length) * 100;
+  const winRate = (winningSessionsCount / sessions.length) * 100;
 
   return {
-    totalSessions: completedSessions.length,
+    totalSessions: sessions.length,
     totalProfit,
     totalHours,
-    avgProfit: totalProfit / completedSessions.length,
+    avgProfit: totalProfit / sessions.length,
     avgHourlyRate: totalProfit / totalHours,
     biggestWin,
     biggestLoss,

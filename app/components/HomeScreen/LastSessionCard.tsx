@@ -2,11 +2,11 @@ import React from 'react';
 import StatsCard, { StatRow, StatItem } from './StatsCard';
 import { formatDate } from './utils';
 import { COLORS } from '@/config/variables';
-import { SessionWithId } from '../../services/sessionService';
 import { calculateDurationMs } from '../SessionDetails/utils';
+import { CompletedSession, Session } from '@/config/types';
 
 interface LastSessionCardProps {
-  session: SessionWithId;
+  session: CompletedSession;
 }
 
 const LastSessionCard = ({ session }: LastSessionCardProps) => {

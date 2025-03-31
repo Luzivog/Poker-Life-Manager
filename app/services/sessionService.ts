@@ -1,10 +1,6 @@
 import { supabase } from "../Auth.native";
-import { Session } from "@/config/types";
+import { Session, SessionWithId } from "@/config/types";
 import { Alert } from "react-native";
-
-export interface SessionWithId extends Session {
-  id: string;
-}
 
 /**
  * Fetches all sessions from the database
@@ -117,7 +113,7 @@ export const saveSession = async (
       return { session: null, error: new Error(error.message) };
     }
     
-    return { session: data?.[0] || null, error: null };
+    return { session: data?.[0] as SessionWithId || null, error: null };
   } catch (error) {
     console.error('Exception saving session:', error);
     return { 

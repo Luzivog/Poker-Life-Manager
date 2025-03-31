@@ -1,21 +1,22 @@
 import React from "react";
 import { Text, View, TouchableOpacity } from "react-native";
 import { globalStyles } from "@/config/styles";
-import { Session } from "@/config/types";
+import { LiveSession, LiveSessionWithId, Session } from "@/config/types";
 import MenuItem from "./menuItem";
 import SlideUpModal from "./SlideUpModal";
+import { LIVE_SESSION_DEFAULTS } from "@/config/variables";
 
 interface LiveSessionMenuProps {
   visible: boolean;
   sessionData: Session;
   onCancel: () => void;
   onFinish: () => void;
-  onValueChange: (key: keyof Session, value: any) => void;
+  onValueChange: (key: keyof LiveSession, value: any) => void;
 }
 
 export default function LiveSessionMenu({ 
   visible, 
-  sessionData, 
+  sessionData,
   onCancel, 
   onFinish, 
   onValueChange 
